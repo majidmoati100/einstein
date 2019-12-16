@@ -1,6 +1,8 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <algorithm>
 #include <iostream>
+#include <random>
 #include <string>
 #include <list>
 #include "puzgen.h"
@@ -196,28 +198,6 @@ void Possibilities::save(std::ostream &stream)
 }
 
 
-static void shuffle(short arr[PUZZLE_SIZE])
-{
-    int a, b, c;
-    
-    for (int i = 0; i < 30; i++) {
-        a = (int)(((double)PUZZLE_SIZE)*rand()/(RAND_MAX+1.0));
-        if ((a < 0) || (a >= PUZZLE_SIZE)) {
-            std::cerr << "Index error" << std::endl;
-            exit(1);
-        }
-        b = (int)(((double)PUZZLE_SIZE)*rand()/(RAND_MAX+1.0));        
-        if ((b < 0) || (b >= PUZZLE_SIZE)) {
-            std::cerr << "Index error" << std::endl;
-            exit(1);
-        }
-        c = arr[a];
-        arr[a] = arr[b];
-        arr[b] = c;
-    }
-}
-
-
 static bool canSolve(SolvedPuzzle &puzzle, Rules &rules)
 {
     Possibilities pos;
@@ -313,10 +293,11 @@ static void printRules(Rules &rules)
 
 void genPuzzle(SolvedPuzzle &puzzle, Rules &rules)
 {
+    std::default_random_engine rng(time(NULL));
     for (int i = 0; i < PUZZLE_SIZE; i++) {
         for (int j = 0; j < PUZZLE_SIZE; j++) 
             puzzle[i][j] = j + 1;
-        shuffle(puzzle[i]);
+        std::shuffle(&puzzle[i], &puzzle[i] + PUZZLE_SIZE, rng);
     }
 
     genRules(puzzle, rules);
