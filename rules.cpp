@@ -8,7 +8,7 @@
 #include "convert.h"
 #include "unicode.h"
 
-static unsigned _seed = std::chrono::system_clock::now().time_since_epoch().count();
+static const unsigned _seed = std::chrono::system_clock::now().time_since_epoch().count();
 static std::mt19937 _rng( _seed);
 
 static std::uniform_int_distribution<int> _puzdist(0, PUZZLE_SIZE - 1);
