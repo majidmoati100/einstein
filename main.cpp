@@ -75,19 +75,6 @@ static void loadResources(const std::wstring &selfPath)
 }
 
 
-/*static void checkBetaExpire()
-{
-    if (1124832535L + 60L*60L*24L*40L < time(NULL)) {
-        Font font(L"laudcn2.ttf", 16);
-        Area area;
-        showMessageWindow(&area, L"darkpattern.bmp", 
-                700, 100, &font, 255,255,255, 
-                msg(L"expired"));
-    }
-}*/
-
-
-
 int main(int argc, char *argv[])
 {
 #ifndef WIN32
@@ -98,7 +85,6 @@ int main(int argc, char *argv[])
         loadResources(fromUtf8(argv[0]));
         initScreen();
         initAudio();
-//        checkBetaExpire();
         menu();
         getStorage()->flush();
     } catch (Exception &e) {
