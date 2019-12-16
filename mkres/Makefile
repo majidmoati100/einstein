@@ -3,12 +3,12 @@ CFLAGS=-Wall $(OPTIMIZE)
 LNFLAGS=-lz
 
 TARGET=mkres
-SOURCES=main.cpp compressor.cpp unicode.cpp table.cpp \
+SOURCES=main.cpp compressor.cpp table.cpp \
 	lexal.cpp format.cpp messages.cpp msgformatter.cpp \
-	../buffer.cpp ../convert.cpp ../streams.cpp
-HEADERS=compressor.h unicode.h lexal.h table.h \
+	../buffer.cpp ../convert.cpp ../streams.cpp ../unicode.cpp
+HEADERS=compressor.h lexal.h table.h \
 	format.h messages.h msgformatter.h \
-	../buffer.h ../convert.h ../streams.h
+	../buffer.h ../convert.h ../streams.h ../unicode.h
 OBJECTS=main.o compressor.o unicode.o streams.o lexal.o table.o \
 	convert.o buffer.o format.o messages.o msgformatter.o
 
