@@ -12,8 +12,6 @@
 
 
 Screen screen;
-Random rndGen;
-
 
 static void initScreen()
 {

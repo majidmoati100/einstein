@@ -1,9 +1,21 @@
+#include <chrono>
+#include <functional>
+#include <random>
+
 #include "puzgen.h"
 #include "utils.h"
 #include "main.h"
 #include "convert.h"
 #include "unicode.h"
 
+static unsigned _seed = std::chrono::system_clock::now().time_since_epoch().count();
+static std::mt19937 _rng( _seed);
+
+static std::uniform_int_distribution<int> _puzdist(0, PUZZLE_SIZE - 1);
+static auto _puzgen = std::bind(_puzdist, _rng);
+
+static std::bernoulli_distribution _booldist(0.5);
+static auto _boolgen = std::bind(_booldist, _rng);
 
 static std::wstring getThingName(int row, int thing)
 {
@@ -38,8 +50,8 @@ class NearRule: public Rule
 
 NearRule::NearRule(SolvedPuzzle puzzle)
 {
-    int col1 = rndGen.genInt(PUZZLE_SIZE);
-    thing1[0] = rndGen.genInt(PUZZLE_SIZE);
+    int col1 = _puzgen();
+    thing1[0] = _puzgen();
     thing1[1] = puzzle[thing1[0]][col1];
 
     int col2;
@@ -49,12 +61,12 @@ NearRule::NearRule(SolvedPuzzle puzzle)
         if (col1 == PUZZLE_SIZE-1)
             col2 = PUZZLE_SIZE-2;
         else
-            if (rndGen.genInt(2))
+            if (_boolgen())
                 col2 = col1 + 1;
             else
                 col2 = col1 - 1;
     
-    thing2[0] = rndGen.genInt(PUZZLE_SIZE);
+    thing2[0] = _puzgen();
     thing2[1] = puzzle[thing2[0]][col2];
 }
 
@@ -152,10 +164,12 @@ class DirectionRule: public Rule
 
 DirectionRule::DirectionRule(SolvedPuzzle puzzle)
 {
-    row1 = rndGen.genInt(PUZZLE_SIZE);
-    row2 = rndGen.genInt(PUZZLE_SIZE);
-    int col1 = rndGen.genInt(PUZZLE_SIZE - 1);
-    int col2 = rndGen.genInt(PUZZLE_SIZE - col1 - 1) + col1 + 1;
+    row1 = _puzgen();
+    row2 = _puzgen();
+    std::uniform_int_distribution<int> gen(0, PUZZLE_SIZE - 2);
+    int col1 = gen(_rng);
+    gen = std::uniform_int_distribution<int>(col1 + 1, PUZZLE_SIZE - 1);
+    int col2 = gen(_rng);
     thing1 = puzzle[row1][col1];
     thing2 = puzzle[row2][col2];
 }
@@ -236,8 +250,8 @@ class OpenRule: public Rule
 
 OpenRule::OpenRule(SolvedPuzzle puzzle)
 {
-    col = rndGen.genInt(PUZZLE_SIZE);
-    row = rndGen.genInt(PUZZLE_SIZE);
+    col = _puzgen();
+    row = _puzgen();
     thing = puzzle[row][col];
 }
 
@@ -289,11 +303,11 @@ class UnderRule: public Rule
 
 UnderRule::UnderRule(SolvedPuzzle puzzle)
 {
-    int col = rndGen.genInt(PUZZLE_SIZE);
-    row1 = rndGen.genInt(PUZZLE_SIZE);
+    int col = _puzgen();
+    row1 = _puzgen();
     thing1 = puzzle[row1][col];
     do {
-        row2 = rndGen.genInt(PUZZLE_SIZE);
+        row2 = _puzgen();
     } while (row2 == row1) ;
     thing2 = puzzle[row2][col];
 }
@@ -375,13 +389,14 @@ class BetweenRule: public Rule
 
 BetweenRule::BetweenRule(SolvedPuzzle puzzle)
 {
-    centerRow = rndGen.genInt(PUZZLE_SIZE);
-    row1 = rndGen.genInt(PUZZLE_SIZE);
-    row2 = rndGen.genInt(PUZZLE_SIZE);
-    
-    int centerCol = rndGen.genInt(PUZZLE_SIZE - 2) + 1;
+    centerRow = _puzgen();
+    row1 = _puzgen();
+    row2 = _puzgen();
+
+    std::uniform_int_distribution<int> gen(1, PUZZLE_SIZE - 2);
+    int centerCol = gen(_rng);
     centerThing = puzzle[centerRow][centerCol];
-    if (rndGen.genInt(2)) {
+    if (_boolgen()) {
         thing1 = puzzle[row1][centerCol - 1];
         thing2 = puzzle[row2][centerCol + 1];
     } else {
@@ -508,8 +523,8 @@ void BetweenRule::save(std::ostream &stream)
 
 Rule* genRule(SolvedPuzzle &puzzle)
 {
-    int a = rndGen.genInt(14);
-    switch (a) {
+    std::uniform_int_distribution<int> gen(0, 13);
+    switch (gen(_rng)) {
         case 0:
         case 1:
         case 2:
