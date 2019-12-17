@@ -26,7 +26,10 @@ class Formatter
         typedef struct
         {
             CmdType type;
-            void *data;
+            union {
+                void *ptr;
+                uint8_t raw[sizeof(void*)];
+            } data;
         } Command;
 
     private:

@@ -25,7 +25,7 @@ Formatter::Formatter(unsigned char *data, int offset)
         switch (type) {
             case 1:
                 commands[commandsCnt].type = TEXT_COMMAND;
-                commands[commandsCnt].data = new std::wstring(
+                commands[commandsCnt].data.ptr = new std::wstring(
                         fromUtf8((char*)data + offset, size));
                 commandsCnt++;
                 break;
@@ -48,7 +48,7 @@ Formatter::Formatter(unsigned char *data, int offset)
             if ((c.type == INT_ARG) || (c.type == STRING_ARG) ||
                     (c.type == FLOAT_ARG) || (c.type == DOUBLE_ARG))
             {
-                int no = (int)c.data;
+                int no = *(int*)c.data.raw;
                 args[no - 1] = c.type;
             }
         }
@@ -59,7 +59,7 @@ Formatter::~Formatter()
 {
     for (int i = 0; i < commandsCnt; i++)
         if (TEXT_COMMAND == commands[i].type)
-            delete (std::wstring*)(commands[i].data);
+            delete (std::wstring*)(commands[i].data.ptr);
     if (commands)
         delete[] commands;
     if (args)
@@ -72,7 +72,7 @@ std::wstring Formatter::getMessage() const
 
     for (int i = 0; i < commandsCnt; i++)
         if (TEXT_COMMAND == commands[i].type)
-            s += *(std::wstring*)(commands[i].data);
+            s += *(std::wstring*)(commands[i].data.ptr);
     return s;
 }
 
@@ -120,12 +120,12 @@ std::wstring Formatter::format(std::vector<ArgValue*> &argValues) const
 
         switch (cmd->type) {
             case TEXT_COMMAND:
-                s += *(std::wstring*)(cmd->data);
+                s += *(std::wstring*)(cmd->data.ptr);
                 break;
                 
             case STRING_ARG:
             case INT_ARG:
-                no = (int)cmd->data - 1;
+                no = *(int*)cmd->data.raw - 1;
                 if (no < (int)argValues.size())
                     s += argValues[no]->format(cmd);
                 break;
@@ -182,7 +182,7 @@ void Formatter::add_arg(unsigned char *data, int offset)
     argsCnt = std::max(argsCnt, argNo);
 
     commands[commandsCnt].type = T;
-    commands[commandsCnt].data = (void*)argNo;
+    *(int*)commands[commandsCnt].data.raw = argNo;
     commandsCnt++;
 }
 
