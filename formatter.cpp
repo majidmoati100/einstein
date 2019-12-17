@@ -3,28 +3,19 @@
 #include "convert.h"
 
 
-#define ADD_ARG(t) \
-                commands[commandsCnt].type = t; \
-                argNo = readInt(data + offset); \
-                if (argNo > maxArg) \
-                    maxArg = argNo; \
-                commands[commandsCnt].data = (void*)argNo; \
-                commandsCnt++;
-
 Formatter::Formatter(unsigned char *data, int offset)
 {
     int cnt = readInt(data + offset);
     if (! cnt) {
-        commandsCnt = argsCnt = 0;
+        commandsCnt = 0;
         commands = NULL;
         args = NULL;
     }
-    
+
+    argsCnt = 0;
     offset += 4;
     commands = new Command[cnt];
     commandsCnt = 0;
-    
-    int maxArg = 0, argNo;
     
     for (int i = 0; i < cnt; i++) {
         int type = data[offset];
@@ -39,15 +30,14 @@ Formatter::Formatter(unsigned char *data, int offset)
                 commandsCnt++;
                 break;
             
-            case 2: ADD_ARG(INT_ARG); break;
-            case 3: ADD_ARG(STRING_ARG); break;
-            case 4: ADD_ARG(FLOAT_ARG); break;
-            case 5: ADD_ARG(DOUBLE_ARG); break;
+            case 2: add_arg<INT_ARG>(data, offset); break;
+            case 3: add_arg<STRING_ARG>(data, offset); break;
+            case 4: add_arg<FLOAT_ARG>(data, offset); break;
+            case 5: add_arg<DOUBLE_ARG>(data, offset); break;
         }
         offset += size;
     }
 
-    argsCnt = maxArg;
     if (! argsCnt)
         args = NULL;
     else {
@@ -183,5 +173,16 @@ std::wstring Formatter::format(va_list ap) const
         delete *i;
     
     return s;
+}
+
+template<Formatter::CmdType T>
+void Formatter::add_arg(unsigned char *data, int offset)
+{
+    int argNo = readInt(data + offset);
+    argsCnt = std::max(argsCnt, argNo);
+
+    commands[commandsCnt].type = T;
+    commands[commandsCnt].data = (void*)argNo;
+    commandsCnt++;
 }
 

@@ -54,6 +54,7 @@ class Formatter
 
     private:
         std::wstring format(std::vector<ArgValue*> &argValues) const;
+        template<Formatter::CmdType T> void add_arg(unsigned char *data, int offset);
 };
 
 
