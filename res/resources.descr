@@ -1,6 +1,7 @@
 priority = 100
 
 resources = {
+    { name = "icon.bmp" }
     { name = "cursor.bmp" }
     { name = "rain.bmp" }
     { name = "tile.bmp" }
