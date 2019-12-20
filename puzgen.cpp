@@ -210,8 +210,8 @@ static bool canSolve(SolvedPuzzle &puzzle, Rules &rules)
             if (rule->apply(pos)) {
                 changed = true;
                 if (! pos.isValid(puzzle)) {
-std::cout << "after error:" << std::endl;
-pos.print();
+                    std::cout << "after error:" << std::endl;
+                    pos.print();
                     throw Exception(L"Invalid possibilities after rule " +
                         rule->getAsText());
                 }
