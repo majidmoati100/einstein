@@ -205,8 +205,7 @@ static bool canSolve(SolvedPuzzle &puzzle, Rules &rules)
     
     do {
         changed = false;
-        for (Rules::iterator i = rules.begin(); i != rules.end(); i++) {
-            Rule *rule = *i;
+        for (auto rule : rules) {
             if (rule->apply(pos)) {
                 changed = true;
                 if (! pos.isValid(puzzle)) {
@@ -230,8 +229,7 @@ static void removeRules(SolvedPuzzle &puzzle, Rules &rules)
     
     do {
         possible = false;
-        for (Rules::iterator i = rules.begin(); i != rules.end(); i++) {
-            Rule *rule = *i;
+        for (auto rule : rules) {
             Rules excludedRules = rules;
             excludedRules.remove(rule);
             if (canSolve(puzzle, excludedRules)) {
@@ -253,9 +251,8 @@ static void genRules(SolvedPuzzle &puzzle, Rules &rules)
         Rule *rule = genRule(puzzle);
         if (rule) {
             std::wstring s = rule->getAsText();
-            for (std::list<Rule*>::iterator i = rules.begin(); 
-                    i != rules.end(); i++) 
-                if ((*i)->getAsText() == s) {
+            for (auto r : rules) 
+                if (r->getAsText() == s) {
                     delete rule;
                     rule = NULL;
                     break;
@@ -286,8 +283,8 @@ static void genRules(SolvedPuzzle &puzzle, Rules &rules)
 
 static void printRules(Rules &rules)
 {
-    for (Rules::iterator i = rules.begin(); i != rules.end(); i++)
-        std::cout << (*i)->getAsText() << std::endl;;
+    for (auto r : rules)
+        std::cout << r->getAsText() << std::endl;;
 }*/
 
 
@@ -309,11 +306,9 @@ void genPuzzle(SolvedPuzzle &puzzle, Rules &rules)
 
 void openInitial(Possibilities &possib, Rules &rules)
 {
-    for (Rules::iterator i = rules.begin(); i != rules.end(); i++) {
-        Rule *r = *i;
+    for (auto r : rules)
         if (r->applyOnStart())
             r->apply(possib);
-    }
 }
 
 
@@ -322,8 +317,8 @@ void getHintsQty(Rules &rules, int &vert, int &horiz)
     vert = 0;
     horiz = 0;
 
-    for (Rules::iterator i = rules.begin(); i != rules.end(); i++) {
-        Rule::ShowOptions so = (*i)->getShowOpts();
+    for (const auto r : rules) {
+        Rule::ShowOptions so = r->getShowOpts();
         switch (so) {
             case Rule::SHOW_VERT: vert++; break;
             case Rule::SHOW_HORIZ: horiz++; break;
@@ -350,9 +345,9 @@ void loadPuzzle(SolvedPuzzle &puzzle, std::istream &stream)
 Rule* getRule(Rules &rules, int no)
 {
     int j = 0;
-    for (Rules::iterator i = rules.begin(); i != rules.end(); i++) {
+    for (auto r : rules) {
         if (j == no)
-            return *i;
+            return r;
         j++;
     }
     throw Exception(L"Rule is not found");

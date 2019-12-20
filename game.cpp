@@ -465,8 +465,8 @@ void Game::save(std::ostream &stream)
 
 void Game::deleteRules()
 {
-    for (Rules::iterator i = rules.begin(); i != rules.end(); i++)
-        delete *i;
+    for (auto r : rules)
+        delete r;
     rules.clear();
 }
 

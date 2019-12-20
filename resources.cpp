@@ -280,10 +280,8 @@ SimpleResourceFile::SimpleResourceFile(const std::wstring &fileName,
 {
     Directory entries;    
     getDirectory(entries);
-    for (Directory::iterator i = entries.begin(); i != entries.end(); i++) {
-        DirectoryEntry &e = *i;
+    for (auto &e : entries)
         directory[e.name] = e;
-    }
 }
 
 void* SimpleResourceFile::load(const std::wstring &name, int &size)
@@ -421,8 +419,8 @@ Resource::Resource(ResourceFile *file, int i18nScore,
 
 Resource::~Resource()
 {
-    for (Variants::iterator i = variants.begin(); i != variants.end(); i++)
-        delete *i;
+    for (auto v : variants)
+        delete v;
 }
 
 class ScorePredicate
@@ -524,19 +522,17 @@ ResourcesCollection::ResourcesCollection(StringList &directories)
 
 ResourcesCollection::~ResourcesCollection()
 {
-    for (ResourcesMap::iterator i = resources.begin(); i != resources.end(); i++)
-        delete (*i).second;
-    for (ResourceFiles::iterator i = files.begin(); i != files.end(); i++)
-        delete *i;
+    for (auto r : resources)
+        delete r.second;
+    for (auto f : files)
+        delete f;
 }
 
 
 void ResourcesCollection::loadResourceFiles(StringList &directories)
 {
-    for (StringList::iterator i = directories.begin();
-            i != directories.end(); i++)
+    for (const auto &d : directories)
     {
-        const std::wstring &d = *i;
         DIR *dir = opendir(toMbcs(d).c_str());
         if (dir) {
             struct dirent *de;
@@ -556,15 +552,11 @@ void ResourcesCollection::loadResourceFiles(StringList &directories)
 void ResourcesCollection::processFiles()
 {
     ResourceFile::Directory dir;
-    for (std::vector<ResourceFile*>::iterator i = files.begin(); 
-            i != files.end(); i++) 
+    for (auto file : files)
     {
-        ResourceFile *file = *i;
         file->getDirectory(dir);
-        for (ResourceFile::Directory::iterator j = dir.begin(); 
-                j != dir.end(); j++) 
+        for (auto &de : dir)
         {
-            ResourceFile::DirectoryEntry &de = *j;
             std::wstring name, ext, language, country;
             splitFileName(de.name, name, ext, language, country);
             int score = getScore(language, country, locale);
@@ -627,10 +619,8 @@ void ResourcesCollection::forEachInGroup(const std::wstring &name,
 {
     if (groups.count(name) > 0) {
         ResourcesList &l = groups[name];
-        for (ResourcesList::iterator i = l.begin(); i != l.end(); i++) {
-            Resource *r = *i;
+        for (auto r : l)
             visitor.onVisit(r);
-        }
     }
 }
 
