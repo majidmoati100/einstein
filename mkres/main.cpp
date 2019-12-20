@@ -111,7 +111,6 @@ static void parseFile(const std::string &fileName)
 int main(int argc, char *argv[])
 {
     int res = 0;
-    //lua_State *lua = NULL;
     parseArgs(argc, argv);
     
     try {
@@ -130,11 +129,6 @@ int main(int argc, char *argv[])
         std::cerr << L"Error: unknown exception" << std::endl;
         res = 1;
     }
-
-/*    if (lua) {
-        lua_setgcthreshold(lua, 0);
-        lua_close(lua);
-    }*/
     
     return res;
 }
