@@ -8,7 +8,7 @@
 class Lexeme
 {
     public:
-        typedef enum Type {
+        enum Type {
             String,
             Integer,
             Float,
