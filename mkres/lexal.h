@@ -2,7 +2,7 @@
 #define __LEXAL_H__
 
 
-#include "streams.h"
+#include "../streams.h"
 
 
 class Lexeme

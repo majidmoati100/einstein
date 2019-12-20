@@ -1,7 +1,8 @@
+#include <cstring>
 #include "compressor.h"
 #include "exceptions.h"
-#include "unicode.h"
-#include "table.h"
+#include "../unicode.h"
+#include "../table.h"
 
 
 static std::string sourceFile, outputFile;

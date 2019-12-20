@@ -2,8 +2,8 @@
 
 #include <iostream>
 #include <sstream>
-#include "convert.h"
-#include "unicode.h"
+#include "../convert.h"
+#include "../unicode.h"
 
 
 class TextCommand: public MsgCommand

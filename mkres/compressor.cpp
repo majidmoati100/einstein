@@ -1,6 +1,7 @@
+#include <cstring>
 #include "compressor.h"
 #include <zlib.h>
-#include "convert.h"
+#include "../convert.h"
 #include "exceptions.h"
 
 

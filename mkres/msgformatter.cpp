@@ -1,6 +1,6 @@
 #include "msgformatter.h"
-#include "table.h"
-#include "unicode.h"
+#include "../table.h"
+#include "../unicode.h"
 #include "messages.h"
 
 

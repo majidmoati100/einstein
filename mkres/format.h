@@ -3,7 +3,7 @@
 
 
 #include <map>
-#include "buffer.h"
+#include "../buffer.h"
 
 
 class Formatter

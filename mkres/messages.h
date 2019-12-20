@@ -5,7 +5,7 @@
 #include <list>
 #include <map>
 #include <string>
-#include "buffer.h"
+#include "../buffer.h"
 
 
 class MsgCommand 
